@@ -1,0 +1,358 @@
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import api from "../api/axios";
+import {
+  FaBed, FaBath, FaRulerCombined, FaMapMarkerAlt,
+  FaPhone, FaHeart
+} from "react-icons/fa";
+import toast from "react-hot-toast";
+import { useAuth } from "../context/AuthContext";
+import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
+
+export default function PropertyDetail() {
+  const { id } = useParams();
+  const [p, setP] = useState(null);
+  const { auth } = useAuth();
+
+  useEffect(() => {
+    api.get(`/api/properties/${id}`).then((res) => setP(res.data));
+  }, [id]);
+
+  if (!p) return <div className="text-center py-10 text-gray-500">Loading...</div>;
+
+  const img = p.images?.[0]?.url || "https://source.unsplash.com/1200x800/?apartment";
+
+  // Contact Broker
+  const contact = async () => {
+    if (!auth) return toast.error("Please login first");
+    if (auth?.role !== "BUYER") return toast.error("Only buyers can contact broker");
+
+    await api.post("/api/inquiries", {
+      propertyId: p.id,
+      message: "Hi, I'm interested in this property."
+    });
+
+    toast.success("Broker has been contacted ✅");
+  };
+
+  // Save to Favorites
+  const saveFavorite = async () => {
+    if (!auth) return toast.error("Please login first");
+    if (auth?.role !== "BUYER") return toast.error("Only buyers can save favorites");
+
+    await api.post(`/api/favorites/${p.id}`);
+    toast.success("Added to favorites ❤️");
+  };
+
+  // Download Brochure as PDF (captures the section below)
+  const downloadPDF = async () => {
+    try {
+      toast.loading("Generating PDF brochure...", { duration: 2000 });
+      
+      const el = document.getElementById("property-section");
+      if (!el) {
+        toast.error("Could not find property section to capture");
+        return;
+      }
+
+      // Create canvas with better options for cross-origin images
+      const canvas = await html2canvas(el, { 
+        scale: 2, 
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: '#ffffff',
+        logging: false
+      });
+      
+      const imgData = canvas.toDataURL("image/png");
+
+      const pdf = new jsPDF("p", "mm", "a4");
+      const pageWidth = 210;
+      const pageHeight = 297;
+
+      // fit width, keep aspect ratio
+      const imgWidth = pageWidth;
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+      let heightLeft = imgHeight;
+      let position = 0;
+
+      pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+      heightLeft -= pageHeight;
+
+      while (heightLeft > 0) {
+        position = heightLeft - imgHeight;
+        pdf.addPage();
+        pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+        heightLeft -= pageHeight;
+      }
+
+      // Clean filename
+      const filename = p.title.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+      pdf.save(`${filename}_brochure.pdf`);
+      
+      toast.success("PDF brochure downloaded successfully! 📄");
+      
+    } catch (error) {
+      console.error("PDF generation error:", error);
+      // Fallback: Create a simple text-based PDF
+      try {
+        toast.loading("Generating simple text brochure...", { duration: 1500 });
+        
+        const pdf = new jsPDF("p", "mm", "a4");
+        const pageWidth = 180;
+        let yPosition = 20;
+        
+        // Title
+        pdf.setFontSize(20);
+        pdf.setFont("helvetica", "bold");
+        pdf.text(p.title, 15, yPosition);
+        yPosition += 15;
+        
+        // Location
+        pdf.setFontSize(14);
+        pdf.setFont("helvetica", "normal");
+        pdf.text(`📍 ${p.city}, ${p.state}`, 15, yPosition);
+        yPosition += 10;
+        
+        // Price
+        pdf.setFontSize(16);
+        pdf.setFont("helvetica", "bold");
+        pdf.text(`💰 ₹${Number(p.price).toLocaleString()}`, 15, yPosition);
+        yPosition += 15;
+        
+        // Property details
+        pdf.setFontSize(12);
+        pdf.setFont("helvetica", "normal");
+        pdf.text(`🏠 ${p.bedrooms} Bedrooms | ${p.bathrooms} Bathrooms | ${p.areaSqft} Sq ft`, 15, yPosition);
+        yPosition += 10;
+        pdf.text(`🏢 Type: ${p.type}`, 15, yPosition);
+        yPosition += 10;
+        pdf.text(`🎯 Purpose: ${p.purpose}`, 15, yPosition);
+        yPosition += 15;
+        
+        // Description
+        pdf.setFont("helvetica", "bold");
+        pdf.text("Description:", 15, yPosition);
+        yPosition += 8;
+        pdf.setFont("helvetica", "normal");
+        
+        const descLines = pdf.splitTextToSize(p.description || "No description available", pageWidth);
+        pdf.text(descLines, 15, yPosition);
+        yPosition += descLines.length * 6;
+        
+        // Address
+        if (p.address) {
+          yPosition += 10;
+          pdf.setFont("helvetica", "bold");
+          pdf.text("Address:", 15, yPosition);
+          yPosition += 8;
+          pdf.setFont("helvetica", "normal");
+          pdf.text(p.address, 15, yPosition);
+        }
+        
+        // Footer
+        yPosition += 20;
+        pdf.setFontSize(10);
+        pdf.setFont("helvetica", "italic");
+        pdf.text("Generated by RebaX Real Estate Platform", 15, yPosition);
+        
+        const filename = p.title.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+        pdf.save(`${filename}_brochure.pdf`);
+        
+        toast.success("Text brochure downloaded successfully! 📄");
+      } catch (fallbackError) {
+        console.error("Fallback PDF generation error:", fallbackError);
+        toast.error("Failed to generate PDF. Please check console for details.");
+      }
+    }
+  };
+
+  // Build a Google Maps embed URL when mapLink is not provided
+  const buildMapSrc = () => {
+    // if broker pasted an embed/share URL, just use it
+    if (p.mapLink && p.mapLink.startsWith("http")) return p.mapLink;
+
+    // else fall back to city/state (or address if present) via Maps Embed API
+    const q = encodeURIComponent(p.address && p.address.trim().length ? p.address : `${p.city}, ${p.state}`);
+    const key = import.meta.env.VITE_GOOGLE_MAPS_API_KEY || "";
+    // If you don’t have an API key yet, this will still try to render the static map,
+    // but Google may block it—so set your key in .env as shown in the steps below.
+    return `https://www.google.com/maps/embed/v1/place?key=${key}&q=${q}`;
+  };
+
+  return (
+    <div className="max-w-6xl mx-auto mt-8 p-4">
+      {/* Everything inside this will be captured for the PDF */}
+      <div id="property-section" className="bg-white dark:bg-neutral-900 rounded-2xl p-4 shadow">
+        {/* Main image */}
+        <img
+          src={img}
+          className="w-full h-[420px] rounded-xl shadow-lg object-cover"
+          alt={p.title}
+          referrerPolicy="no-referrer"
+        />
+
+        {/* Title + location */}
+        <h2 className="text-3xl font-bold mt-4">{p.title}</h2>
+        <p className="flex items-center gap-2 text-gray-600 dark:text-gray-300 text-lg">
+          <FaMapMarkerAlt /> {p.city}, {p.state}
+        </p>
+
+        {/* Price */}
+        <p className="text-3xl font-extrabold text-indigo-600 mt-3">
+          ₹ {Number(p.price).toLocaleString()}
+        </p>
+
+        {/* Quick facts */}
+        <div className="flex flex-wrap gap-6 mt-4 text-lg text-gray-700 dark:text-gray-200">
+          <span className="flex gap-2 items-center"><FaBed /> {p.bedrooms} Beds</span>
+          <span className="flex gap-2 items-center"><FaBath /> {p.bathrooms} Baths</span>
+          <span className="flex gap-2 items-center"><FaRulerCombined /> {p.areaSqft} Sqft</span>
+        </div>
+
+        {/* Description */}
+        <p className="mt-6 text-gray-700 dark:text-gray-200 text-lg leading-relaxed">
+          {p.description}
+        </p>
+
+        {/* Extra images */}
+        {p.images?.length > 1 && (
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mt-6">
+            {p.images.slice(1).map((im, i) => (
+              <img
+                key={i}
+                src={im.url}
+                alt={`Property ${i + 2}`}
+                className="h-40 w-full object-cover rounded-xl"
+                referrerPolicy="no-referrer"
+              />
+            ))}
+          </div>
+        )}
+
+        {/* Location with Map Button */}
+        <div className="mt-8">
+          <h3 className="text-xl font-semibold mb-4">Location</h3>
+          
+          {/* Location Info Card */}
+          <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-6 border">
+            <div className="flex items-start justify-between">
+              <div>
+                <h4 className="font-semibold text-lg text-gray-900 dark:text-white mb-2">
+                  <FaMapMarkerAlt className="inline mr-2 text-red-500" />
+                  Property Address
+                </h4>
+                <p className="text-gray-600 dark:text-gray-300 mb-2">
+                  {p.address || 'Address not specified'}
+                </p>
+                <p className="text-gray-600 dark:text-gray-300">
+                  {p.city}, {p.state}
+                </p>
+              </div>
+              
+              {/* Map Actions */}
+              <div className="flex flex-col gap-2">
+                <a
+                  href={p.mapLink || `https://maps.google.com/?q=${encodeURIComponent(p.address || p.city + ', ' + p.state)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors"
+                >
+                  🗺️ Open in Maps
+                </a>
+                <button
+                  onClick={() => {
+                    const address = p.address || `${p.city}, ${p.state}`;
+                    navigator.clipboard.writeText(address);
+                    toast.success("Address copied to clipboard!");
+                  }}
+                  className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors"
+                >
+                  📋 Copy Address
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Static Map Preview (Alternative) */}
+          <div className="mt-4">
+            <div className="bg-gradient-to-br from-blue-100 to-green-100 dark:from-blue-900 dark:to-green-900 rounded-xl h-48 flex items-center justify-center border">
+              <div className="text-center">
+                <div className="text-4xl mb-2">🗺️</div>
+                <p className="text-gray-600 dark:text-gray-300 font-medium">Interactive Map</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400">Click "Open in Maps" to view location</p>
+              </div>
+            </div>
+          </div>
+
+          <p className="text-sm text-gray-400 mt-2">
+            📍 Location: {p.city}, {p.state}
+          </p>
+        </div>
+      </div>
+
+      {/* Actions (not part of PDF to avoid duplicated buttons inside the PDF image) */}
+      <div className="mt-6 flex flex-wrap gap-3">
+        <button onClick={contact} className="btn btn-primary">
+          <FaPhone /> Contact Broker
+        </button>
+
+        <button onClick={saveFavorite} className="btn btn-secondary">
+          <FaHeart /> Save Favorite
+        </button>
+
+        <button onClick={downloadPDF} className="btn">
+          📄 Download PDF Brochure
+        </button>
+
+        <button 
+          onClick={() => {
+            const propertyInfo = `
+PROPERTY BROCHURE
+=================
+
+Title: ${p.title}
+Location: ${p.city}, ${p.state}
+Price: ₹${Number(p.price).toLocaleString()}
+
+Property Details:
+- Bedrooms: ${p.bedrooms}
+- Bathrooms: ${p.bathrooms}
+- Area: ${p.areaSqft} sq ft
+- Type: ${p.type}
+- Purpose: ${p.purpose}
+
+Description:
+${p.description || 'No description available'}
+
+${p.address ? `Address: ${p.address}` : ''}
+
+Contact Information:
+Generated by RebaX Real Estate Platform
+Visit: localhost:5173
+
+Generated on: ${new Date().toLocaleDateString()}
+            `.trim();
+
+            const blob = new Blob([propertyInfo], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${p.title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_info.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            toast.success("Property info downloaded! 📝");
+          }}
+          className="btn btn-outline"
+        >
+          📝 Download Info (TXT)
+        </button>
+      </div>
+    </div>
+  );
+}

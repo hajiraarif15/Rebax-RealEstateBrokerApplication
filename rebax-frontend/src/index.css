@@ -1,0 +1,14 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Light global baseline so the UI isn't stark/plain before custom design tokens. */
+@layer base {
+	body {
+		@apply bg-gray-50 text-gray-800 antialiased;
+		font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+	}
+	a {
+		@apply text-indigo-600 hover:text-indigo-700 transition-colors;
+	}
+}
