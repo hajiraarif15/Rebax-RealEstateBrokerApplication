@@ -158,17 +158,6 @@ rebax-real-estate/
 - `GET /api/chat/inquiry/{id}` - Get chat history
 - `POST /api/chat/send` - Send message
 
-## 🎨 Screenshots
-
-### Dashboard
-![Broker Dashboard](https://via.placeholder.com/800x400/4F46E5/FFFFFF?text=Broker+Dashboard)
-
-### Property Listings
-![Property Listings](https://via.placeholder.com/800x400/059669/FFFFFF?text=Property+Listings)
-
-### Property Details
-![Property Details](https://via.placeholder.com/800x400/DC2626/FFFFFF?text=Property+Details)
-
 ## 🌐 Features in Detail
 
 ### **Property Management**
@@ -236,34 +225,13 @@ npm run preview
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
-## 📝 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
 ## 🙋‍♂️ Support
 
 If you have any questions or need help with setup, please open an issue or contact:
 
-- **Email:** support@rebax.com
+- **Email:** hajiraarif24@gmail.com
 - **GitHub Issues:** [Create an Issue](https://github.com/your-username/rebax-real-estate/issues)
 
-## 🔮 Future Enhancements
-
-- [ ] Payment integration for premium listings
-- [ ] Advanced search with map-based filtering
-- [ ] Email notifications system
-- [ ] Property comparison features
-- [ ] Mobile app development
-- [ ] Multi-language support
-- [ ] Advanced analytics dashboard
-- [ ] Property valuation tools
-
-## ⭐ Star History
-
-If you find this project helpful, please consider giving it a star on GitHub!
-
----
-
-**Built with ❤️ by [Your Name]**
+**Built with ❤️ by Hajira Arif**
 
 *RebaX - Connecting Properties with People*
