@@ -15,9 +15,8 @@ export default function AddProperty() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validate required fields
     if (!form.title || !form.description || !form.city || !form.state || !form.price || !form.type || !form.purpose) {
-      alert("❌ Please fill in all required fields.");
+      alert("Please fill in all required fields.");
       return;
     }
 
@@ -31,15 +30,15 @@ export default function AddProperty() {
       amenities: form.amenities || []
     };
 
-    console.log("🚀 Submitting payload:", payload);
+    console.log("Submitting payload:", payload);
 
     try {
       const response = await api.post("/api/properties", payload);
-      console.log("✅ Property created:", response.data);
-      alert("✅ Property added successfully!");
+      console.log("Property created:", response.data);
+      alert("Property added successfully!");
       navigate("/broker/listings");
     } catch (err) {
-      console.error("❌ Failed to add property:", err.response?.data || err.message);
+      console.error("Failed to add property:", err.response?.data || err.message);
       const errorMsg = err.response?.data?.message || err.message || "Failed to add property";
       alert(`❌ ${errorMsg}`);
     }
@@ -108,7 +107,7 @@ export default function AddProperty() {
           required
         />
 
-        {/* ✅ Image Upload */}
+        
         <label className="col-span-2 font-semibold text-gray-700 dark:text-gray-300">
           Upload Property Images
         </label>
