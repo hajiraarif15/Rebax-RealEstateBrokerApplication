@@ -10,8 +10,8 @@ public interface FavoriteRepository extends JpaRepository<Favorite, Long> {
     List<Favorite> findByBuyerId(Long buyerId);
     Optional<Favorite> findByBuyerIdAndPropertyId(Long buyerId, Long propertyId);
 
-    int countByPropertyBrokerId(Long brokerId);  // ✅ Total favorites on broker's properties
+    int countByPropertyBrokerId(Long brokerId); 
 
-    int countByPropertyBrokerIdAndProperty_City(Long brokerId, String city); // ✅ Favorites by city
+    int countByPropertyBrokerIdAndProperty_City(Long brokerId, String city); 
 
 }
