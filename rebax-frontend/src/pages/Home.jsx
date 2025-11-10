@@ -7,7 +7,6 @@ import { Autoplay, Pagination } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/pagination";
 
-// Extra sections
 import StatsStrip from "../components/StatsStrip";
 import WhyChooseUs from "../components/WhyChooseUs";
 import FeaturedCities from "../components/FeaturedCities";
@@ -30,16 +29,15 @@ export default function Home() {
 
       const { data } = await api.get("/api/properties", { params: cleanedQuery });
 
-      // ✅ Ensure data is always an array
       if (Array.isArray(data)) {
         setList(data);
       } else {
-        console.warn("⚠️ Unexpected API response:", data);
+        console.warn("Unexpected API response:", data);
         setList([]);
         setError("Unexpected response format from server.");
       }
     } catch (err) {
-      console.error("❌ Failed to load properties:", err);
+      console.error("Failed to load properties:", err);
       setList([]);
       setError("Failed to load properties. Please try again later.");
     } finally {
@@ -61,7 +59,6 @@ export default function Home() {
   return (
     <div className="bg-gray-50 dark:bg-neutral-900 dark:text-white">
 
-      {/* ✅ Hero Banner */}
       <div className="rounded-2xl overflow-hidden shadow-xl mb-8">
         <Swiper
           modules={[Autoplay, Pagination]}
@@ -91,7 +88,6 @@ export default function Home() {
         </Swiper>
       </div>
 
-      {/* ✅ Search Bar */}
       <div className="max-w-7xl mx-auto p-4 -mt-10 relative z-10">
         <div className="backdrop-blur-md bg-white/80 dark:bg-neutral-900/70 border rounded-2xl p-5 mb-8 shadow-lg grid grid-cols-1 md:grid-cols-4 gap-3">
           <input
@@ -133,17 +129,14 @@ export default function Home() {
         </div>
       </div>
 
-      {/* ✅ Error Banner */}
       {error && (
         <div className="max-w-7xl mx-auto bg-red-100 text-red-700 border border-red-300 p-4 rounded-xl mb-6">
           {error}
         </div>
       )}
 
-      {/* ✅ Stats */}
       <StatsStrip />
 
-      {/* ✅ Featured Listings */}
       <div className="max-w-7xl mx-auto p-4">
         <h2 className="text-3xl font-bold mb-4">Featured Listings ✨</h2>
 
@@ -169,7 +162,6 @@ export default function Home() {
         )}
       </div>
 
-      {/* ✅ Extra Sections */}
       <FeaturedCities />
       <WhyChooseUs />
       <Testimonials />
