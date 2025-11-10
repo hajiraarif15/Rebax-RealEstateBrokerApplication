@@ -24,7 +24,6 @@ export default function Login() {
     try {
       const { data } = await api.post("/api/auth/login", form);
 
-      // ✅ Save token + user details for future API requests
       setAuth(data);
       localStorage.setItem("rebax_auth", JSON.stringify(data));
 
@@ -54,7 +53,7 @@ export default function Login() {
         </p>
 
         <form onSubmit={submit} className="grid gap-4">
-          {/* Email */}
+
           <div className="relative">
             <FaEnvelope className="absolute left-3 top-3 text-gray-400" />
             <input
@@ -67,7 +66,6 @@ export default function Login() {
             />
           </div>
 
-          {/* Password */}
           <div className="relative">
             <FaLock className="absolute left-3 top-3 text-gray-400" />
             <input
@@ -80,7 +78,6 @@ export default function Login() {
             />
           </div>
 
-          {/* Button */}
           <button
             type="submit"
             disabled={loading}
