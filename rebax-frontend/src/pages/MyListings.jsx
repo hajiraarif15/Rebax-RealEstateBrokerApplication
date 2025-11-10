@@ -11,42 +11,15 @@ export default function MyListings() {
   const navigate = useNavigate();
   const { auth } = useAuth();
 
-  // const load = async () => {
-  //   setLoading(true);
-  //   try {
-  //     const response = await api.get("/api/properties/my");
-  //     console.log("🔍 API Response:", response);
-
-  //     const data = response?.data;
-
-  //     if (Array.isArray(data)) {
-  //       console.log("✅ Setting property list:", data);
-  //       setList(data);
-  //     } else if (Array.isArray(data?.content)) {
-  //       console.log("✅ Setting paginated property list:", data.content);
-  //       setList(data.content);
-  //     } else {
-  //       console.warn("⚠️ Unexpected data format:", data);
-  //       toast.error("Unexpected response format from server.");
-  //       setList([]);
-  //     }
-  //   } catch (err) {
-  //     console.error("❌ Failed to load listings:", err);
-  //     toast.error("Failed to load your listings.");
-  //     setList([]);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
   const load = async () => {
     setLoading(true);
     try {
       // Debug auth data
       const authData = localStorage.getItem("rebax_auth");
-      console.log("� Auth data from localStorage:", authData);
+      console.log("Auth data from localStorage:", authData);
       if (authData) {
         const parsed = JSON.parse(authData);
-        console.log("🔐 Parsed auth data:", {
+        console.log("Parsed auth data:", {
           email: parsed.email,
           role: parsed.role,
           userId: parsed.userId,
@@ -54,30 +27,30 @@ export default function MyListings() {
         });
       }
       
-      console.log("�🔄 Loading listings...");
+      console.log("Loading listings...");
       const response = await api.get("/api/properties/my");
-      console.log("📝 Full API response:", response);
-      console.log("📊 Response data:", response.data);
-      console.log("📊 Data type:", typeof response.data);
-      console.log("📊 Is array?", Array.isArray(response.data));
+      console.log("Full API response:", response);
+      console.log("Response data:", response.data);
+      console.log("Data type:", typeof response.data);
+      console.log("Is array?", Array.isArray(response.data));
       
       if (Array.isArray(response.data)) {
-        console.log("✅ Setting property list:", response.data.length, "items");
+        console.log("Setting property list:", response.data.length, "items");
         setList(response.data);
         if (response.data.length === 0) {
           toast.info("No properties found. Try adding a new property.");
         }
       } else {
-        console.warn("⚠️ Unexpected data format:", response.data);
-        console.warn("⚠️ Expected array, got:", typeof response.data);
+        console.warn("Unexpected data format:", response.data);
+        console.warn("Expected array, got:", typeof response.data);
         toast.error("Unexpected response format from server.");
         setList([]);
       }
     } catch (err) {
       const status = err.response?.status;
       const body = err.response?.data;
-      console.error("❌ Error loading listings:", status, body || err.message);
-      console.error("❌ Full error:", err);
+      console.error("Error loading listings:", status, body || err.message);
+      console.error("Full error:", err);
       if (status === 401) {
         toast.error("Session expired. Please log in.");
         navigate("/login");
@@ -110,7 +83,7 @@ export default function MyListings() {
         toast.error("Delete failed (unexpected status).");
       }
     } catch (err) {
-      console.error("❌ Delete error:", err.response?.data || err.message);
+      console.error("Delete error:", err.response?.data || err.message);
       toast.error(err.response?.data?.message || "Failed to delete property.");
     }
   };
