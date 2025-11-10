@@ -6,7 +6,6 @@ export default function Contact() {
   return (
     <div className="bg-gray-50 dark:bg-neutral-900 dark:text-white">
 
-      {/* ✅ HERO SECTION */}
       <div className="relative h-[45vh] flex items-center justify-center">
         <img
           src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?q=80&w=1600"
@@ -22,7 +21,6 @@ export default function Contact() {
 
       <div className="max-w-7xl mx-auto px-6 py-14 grid lg:grid-cols-2 gap-12">
 
-        {/* ✅ CONTACT INFO CARD */}
         <div className="bg-white dark:bg-neutral-800 shadow-xl p-8 rounded-2xl border">
           <h2 className="text-2xl font-bold mb-6">Get In Touch</h2>
           <p className="text-gray-600 dark:text-gray-300 mb-6">
@@ -46,7 +44,6 @@ export default function Contact() {
             </div>
           </div>
 
-          {/* ✅ SOCIAL LINKS */}
           <div className="flex gap-4 mt-6 text-2xl">
             <a href="#" className="hover:text-indigo-500 transition"><FaInstagram /></a>
             <a href="#" className="hover:text-indigo-500 transition"><FaLinkedin /></a>
@@ -54,7 +51,6 @@ export default function Contact() {
           </div>
         </div>
 
-        {/* ✅ CONTACT FORM */}
         <form className="bg-white dark:bg-neutral-800 shadow-xl p-8 rounded-2xl border">
           <h2 className="text-2xl font-bold mb-6">Send Us a Message</h2>
 
