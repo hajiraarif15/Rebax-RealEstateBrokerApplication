@@ -17,7 +17,6 @@ public class CorsConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
 
-        // ✅ Split and trim multiple origins (e.g., 5173, 5174)
         config.setAllowedOrigins(Arrays.asList(allowedOrigins.split(",")));
 
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
