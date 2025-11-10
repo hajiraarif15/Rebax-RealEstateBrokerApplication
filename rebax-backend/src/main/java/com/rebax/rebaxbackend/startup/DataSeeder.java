@@ -26,7 +26,6 @@ public class DataSeeder implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        // Seed ONLY if no users present
         if (userRepository.count() > 0) return;
 
         // Seed Broker
@@ -47,13 +46,12 @@ public class DataSeeder implements CommandLineRunner {
 
         System.out.println("✅ Seeded users: broker@rebax.com / buyer@rebax.com (password: password)");
 
-        // Seed Sample Properties for the broker
         seedSampleProperties(broker);
-        System.out.println("✅ Seeded sample properties for demonstration");
+        System.out.println("Seeded sample properties for demonstration");
     }
 
     private void seedSampleProperties(User broker) {
-        // Property 1: Luxury Apartment
+
         Property prop1 = Property.builder()
                 .title("2BHK Luxury Apartment - Whitefield")
                 .description("Modern 2BHK apartment in gated society near IT park. Features include clubhouse, swimming pool, gym, and 24x7 security. Perfect for IT professionals seeking luxury and convenience.")
@@ -78,7 +76,6 @@ public class DataSeeder implements CommandLineRunner {
         prop1.setImages(List.of(img1));
         propertyRepository.save(prop1);
 
-        // Property 2: Villa for Rent
         Property prop2 = Property.builder()
                 .title("4BHK Independent Villa - Koramangala")
                 .description("Spacious 4BHK independent villa with garden and parking. Located in prime Koramangala area with easy access to restaurants, shopping, and business districts.")
@@ -103,7 +100,6 @@ public class DataSeeder implements CommandLineRunner {
         prop2.setImages(List.of(img2));
         propertyRepository.save(prop2);
 
-        // Property 3: Studio Apartment
         Property prop3 = Property.builder()
                 .title("Modern Studio Apartment - MG Road")
                 .description("Compact and modern studio apartment in the heart of MG Road. Fully furnished with modern amenities, high-speed internet, and excellent connectivity to all parts of the city.")
@@ -128,7 +124,6 @@ public class DataSeeder implements CommandLineRunner {
         prop3.setImages(List.of(img3));
         propertyRepository.save(prop3);
 
-        // Property 4: Affordable Townhouse
         Property prop4 = Property.builder()
                 .title("3BHK Townhouse - Electronic City")
                 .description("Affordable 3BHK townhouse in Electronic City phase 2. Good for small families with nearby schools, hospitals, and shopping complexes. Easy access to IT companies.")
@@ -153,7 +148,6 @@ public class DataSeeder implements CommandLineRunner {
         prop4.setImages(List.of(img4));
         propertyRepository.save(prop4);
 
-        // Property 5: Luxury Penthouse
         Property prop5 = Property.builder()
                 .title("Luxury Penthouse - UB City Mall")
                 .description("Ultra-luxury penthouse with panoramic city views. Premium location near UB City Mall with world-class amenities, rooftop access, and concierge services.")
