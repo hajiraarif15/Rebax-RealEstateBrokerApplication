@@ -28,7 +28,6 @@ export default function Register() {
     try {
       const { data } = await api.post("/api/auth/register", form);
 
-      // Save auth data in context + localStorage
       setAuth(data);
       localStorage.setItem("rebax_auth", JSON.stringify(data));
 
@@ -58,7 +57,7 @@ export default function Register() {
         </p>
 
         <form onSubmit={submit} className="grid gap-4">
-          {/* Full Name */}
+
           <div className="relative">
             <FaUser className="absolute left-3 top-3 text-gray-400" />
             <input
@@ -70,7 +69,6 @@ export default function Register() {
             />
           </div>
 
-          {/* Email */}
           <div className="relative">
             <FaEnvelope className="absolute left-3 top-3 text-gray-400" />
             <input
@@ -83,7 +81,6 @@ export default function Register() {
             />
           </div>
 
-          {/* Password */}
           <div className="relative">
             <FaLock className="absolute left-3 top-3 text-gray-400" />
             <input
@@ -96,7 +93,6 @@ export default function Register() {
             />
           </div>
 
-          {/* Role */}
           <select
             className="select select-bordered w-full dark:bg-neutral-700"
             value={form.role}
@@ -106,7 +102,6 @@ export default function Register() {
             <option value="BROKER">Broker</option>
           </select>
 
-          {/* Submit Button */}
           <button
             disabled={loading}
             className="btn btn-primary w-full text-lg font-semibold bg-indigo-600 hover:bg-indigo-700"
