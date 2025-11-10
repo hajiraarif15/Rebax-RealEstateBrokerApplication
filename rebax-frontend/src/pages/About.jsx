@@ -4,7 +4,6 @@ export default function About() {
   return (
     <div className="bg-gray-50 dark:bg-neutral-900 dark:text-white">
 
-      {/* ✅ HERO SECTION */}
       <div className="relative h-[60vh] flex items-center">
         <img
           src="/about.jpg"
@@ -24,7 +23,6 @@ export default function About() {
         </div>
       </div>
 
-      {/* ✅ MISSION */}
       <div className="max-w-6xl mx-auto py-16 px-4 grid md:grid-cols-2 gap-10 items-center">
         <div>
           <h2 className="text-3xl font-bold mb-4">Our Mission</h2>
@@ -37,7 +35,6 @@ export default function About() {
         <img src="/mission.jpg" alt="Mission" className="rounded-xl shadow-xl" />
       </div>
 
-      {/* ✅ VISION */}
       <div className="max-w-6xl mx-auto py-12 px-4 grid md:grid-cols-2 gap-10 items-center md:flex-row-reverse">
 
         <img src="/vision.jpg" alt="Vision" className="rounded-xl shadow-xl order-2 md:order-1" />
@@ -51,7 +48,6 @@ export default function About() {
         </div>
       </div>
 
-      {/* ✅ WHY CHOOSE US */}
       <div className="bg-white dark:bg-neutral-800 py-20">
         <div className="max-w-6xl mx-auto text-center px-4">
           <h2 className="text-3xl font-bold mb-10">Why Choose RebaX?</h2>
