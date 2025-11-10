@@ -76,7 +76,6 @@ export default function BrokerDashboard() {
 
   const COLORS = ['#6366f1', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981'];
 
-  // Calculate average price and total value
   const totalValue = recentProperties.reduce((sum, prop) => sum + (prop.price || 0), 0);
   const avgPrice = recentProperties.length > 0 ? totalValue / recentProperties.length : 0;
 
@@ -97,7 +96,6 @@ export default function BrokerDashboard() {
         </button>
       </div>
 
-      {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {[
           { 
@@ -155,9 +153,8 @@ export default function BrokerDashboard() {
         ))}
       </div>
 
-      {/* Charts Section */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Properties by City Chart */}
+
         <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Properties by City</h2>
@@ -189,7 +186,6 @@ export default function BrokerDashboard() {
           </ResponsiveContainer>
         </div>
 
-        {/* Property Types Pie Chart */}
         <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Property Types</h2>
@@ -229,7 +225,6 @@ export default function BrokerDashboard() {
         </div>
       </div>
 
-      {/* Recent Properties Section */}
       <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Recent Properties</h2>
@@ -309,7 +304,6 @@ export default function BrokerDashboard() {
         )}
       </div>
 
-      {/* Quick Actions */}
       <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700">
         <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Quick Actions</h2>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
