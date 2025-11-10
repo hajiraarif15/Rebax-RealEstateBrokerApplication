@@ -24,7 +24,6 @@ public class JwtService {
         return Keys.hmacShaKeyFor(secret.getBytes());
     }
 
-    // ✅ Generate a new JWT token for a user
     public String generate(User user) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("role", user.getRole().name());
@@ -44,12 +43,10 @@ public class JwtService {
                 .compact();
     }
 
-    // ✅ Extract email (subject) from JWT
     public String extractUsername(String token) {
         return extractAllClaims(token).getSubject();
     }
 
-    // ✅ Check token validity
     public boolean isTokenValid(String token, User user) {
         final String username = extractUsername(token);
         return username.equals(user.getEmail()) && !isTokenExpired(token);
