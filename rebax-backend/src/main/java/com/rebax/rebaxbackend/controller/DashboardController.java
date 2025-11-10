@@ -26,24 +26,19 @@ public class DashboardController {
 
         List<Property> listings = propertyRepo.findByBrokerIdOrderByIdDesc(broker.getId());
 
-        // City counts
         Map<String, Integer> cityCounts = listings.stream()
                 .collect(Collectors.groupingBy(Property::getCity, Collectors.collectingAndThen(Collectors.counting(), Math::toIntExact)));
 
-        // Property type counts
         Map<String, Integer> typeCounts = listings.stream()
                 .collect(Collectors.groupingBy(p -> p.getType().toString(), Collectors.collectingAndThen(Collectors.counting(), Math::toIntExact)));
 
-        // Purpose counts (Sale vs Rent)
         Map<String, Integer> purposeCounts = listings.stream()
                 .collect(Collectors.groupingBy(p -> p.getPurpose().toString(), Collectors.collectingAndThen(Collectors.counting(), Math::toIntExact)));
 
-        // Total portfolio value
         double totalValue = listings.stream()
                 .mapToDouble(p -> p.getPrice() != null ? p.getPrice().doubleValue() : 0.0)
                 .sum();
 
-        // Average price
         double avgPrice = listings.isEmpty() ? 0.0 : totalValue / listings.size();
 
         Map<String, Object> result = new HashMap<>();
