@@ -9,6 +9,6 @@ public interface InquiryRepository extends JpaRepository<Inquiry, Long> {
     List<Inquiry> findByBuyerIdOrderByCreatedAtDesc(Long buyerId);
     List<Inquiry> findByBrokerIdOrderByCreatedAtDesc(Long brokerId);
 
-    int countByBrokerId(Long brokerId); // ✅ Count broker inquiries
+    int countByBrokerId(Long brokerId); 
 
 }
