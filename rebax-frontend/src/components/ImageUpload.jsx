@@ -4,23 +4,19 @@ import { FaPlus, FaTrash } from "react-icons/fa";
 export default function ImageUpload({ initial = [], onChange }) {
   const [urls, setUrls] = useState(initial || [""]);
 
-  // 🔁 Sync parent whenever URLs change
   useEffect(() => {
     onChange?.(urls.filter((u) => u.trim() !== ""));
   }, [urls]);
 
-  // 🧹 Remove image by index
   const removeUrl = (index) => {
     const updated = urls.filter((_, i) => i !== index);
     setUrls(updated.length ? updated : [""]);
   };
 
-  // ➕ Add a new empty URL input
   const addNewUrl = () => {
     setUrls([...urls, ""]);
   };
 
-  // ✏️ Update specific URL
   const handleUrlChange = (index, value) => {
     const updated = [...urls];
     updated[index] = value;
@@ -42,7 +38,6 @@ export default function ImageUpload({ initial = [], onChange }) {
         </button>
       </div>
 
-      {/* 🔗 Image URL input fields */}
       <div className="space-y-2">
         {urls.map((url, i) => (
           <div
@@ -67,7 +62,6 @@ export default function ImageUpload({ initial = [], onChange }) {
         ))}
       </div>
 
-      {/* 🖼 Preview section */}
       {urls.filter((u) => u.trim() !== "").length > 0 && (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-3">
           {urls
