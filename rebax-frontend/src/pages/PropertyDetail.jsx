@@ -23,7 +23,6 @@ export default function PropertyDetail() {
 
   const img = p.images?.[0]?.url || "https://source.unsplash.com/1200x800/?apartment";
 
-  // Contact Broker
   const contact = async () => {
     if (!auth) return toast.error("Please login first");
     if (auth?.role !== "BUYER") return toast.error("Only buyers can contact broker");
@@ -36,7 +35,6 @@ export default function PropertyDetail() {
     toast.success("Broker has been contacted ✅");
   };
 
-  // Save to Favorites
   const saveFavorite = async () => {
     if (!auth) return toast.error("Please login first");
     if (auth?.role !== "BUYER") return toast.error("Only buyers can save favorites");
@@ -45,7 +43,6 @@ export default function PropertyDetail() {
     toast.success("Added to favorites ❤️");
   };
 
-  // Download Brochure as PDF (captures the section below)
   const downloadPDF = async () => {
     try {
       toast.loading("Generating PDF brochure...", { duration: 2000 });
@@ -56,7 +53,6 @@ export default function PropertyDetail() {
         return;
       }
 
-      // Create canvas with better options for cross-origin images
       const canvas = await html2canvas(el, { 
         scale: 2, 
         useCORS: true,
@@ -71,7 +67,6 @@ export default function PropertyDetail() {
       const pageWidth = 210;
       const pageHeight = 297;
 
-      // fit width, keep aspect ratio
       const imgWidth = pageWidth;
       const imgHeight = (canvas.height * imgWidth) / canvas.width;
 
@@ -88,7 +83,6 @@ export default function PropertyDetail() {
         heightLeft -= pageHeight;
       }
 
-      // Clean filename
       const filename = p.title.replace(/[^a-z0-9]/gi, '_').toLowerCase();
       pdf.save(`${filename}_brochure.pdf`);
       
@@ -96,33 +90,26 @@ export default function PropertyDetail() {
       
     } catch (error) {
       console.error("PDF generation error:", error);
-      // Fallback: Create a simple text-based PDF
       try {
         toast.loading("Generating simple text brochure...", { duration: 1500 });
         
         const pdf = new jsPDF("p", "mm", "a4");
         const pageWidth = 180;
         let yPosition = 20;
-        
-        // Title
         pdf.setFontSize(20);
         pdf.setFont("helvetica", "bold");
         pdf.text(p.title, 15, yPosition);
         yPosition += 15;
-        
-        // Location
         pdf.setFontSize(14);
         pdf.setFont("helvetica", "normal");
         pdf.text(`📍 ${p.city}, ${p.state}`, 15, yPosition);
         yPosition += 10;
-        
-        // Price
+
         pdf.setFontSize(16);
         pdf.setFont("helvetica", "bold");
         pdf.text(`💰 ₹${Number(p.price).toLocaleString()}`, 15, yPosition);
         yPosition += 15;
-        
-        // Property details
+  
         pdf.setFontSize(12);
         pdf.setFont("helvetica", "normal");
         pdf.text(`🏠 ${p.bedrooms} Bedrooms | ${p.bathrooms} Bathrooms | ${p.areaSqft} Sq ft`, 15, yPosition);
@@ -131,8 +118,7 @@ export default function PropertyDetail() {
         yPosition += 10;
         pdf.text(`🎯 Purpose: ${p.purpose}`, 15, yPosition);
         yPosition += 15;
-        
-        // Description
+   
         pdf.setFont("helvetica", "bold");
         pdf.text("Description:", 15, yPosition);
         yPosition += 8;
@@ -141,8 +127,7 @@ export default function PropertyDetail() {
         const descLines = pdf.splitTextToSize(p.description || "No description available", pageWidth);
         pdf.text(descLines, 15, yPosition);
         yPosition += descLines.length * 6;
-        
-        // Address
+
         if (p.address) {
           yPosition += 10;
           pdf.setFont("helvetica", "bold");
@@ -151,8 +136,7 @@ export default function PropertyDetail() {
           pdf.setFont("helvetica", "normal");
           pdf.text(p.address, 15, yPosition);
         }
-        
-        // Footer
+
         yPosition += 20;
         pdf.setFontSize(10);
         pdf.setFont("helvetica", "italic");
@@ -169,24 +153,16 @@ export default function PropertyDetail() {
     }
   };
 
-  // Build a Google Maps embed URL when mapLink is not provided
   const buildMapSrc = () => {
-    // if broker pasted an embed/share URL, just use it
     if (p.mapLink && p.mapLink.startsWith("http")) return p.mapLink;
-
-    // else fall back to city/state (or address if present) via Maps Embed API
     const q = encodeURIComponent(p.address && p.address.trim().length ? p.address : `${p.city}, ${p.state}`);
     const key = import.meta.env.VITE_GOOGLE_MAPS_API_KEY || "";
-    // If you don’t have an API key yet, this will still try to render the static map,
-    // but Google may block it—so set your key in .env as shown in the steps below.
     return `https://www.google.com/maps/embed/v1/place?key=${key}&q=${q}`;
   };
 
   return (
     <div className="max-w-6xl mx-auto mt-8 p-4">
-      {/* Everything inside this will be captured for the PDF */}
       <div id="property-section" className="bg-white dark:bg-neutral-900 rounded-2xl p-4 shadow">
-        {/* Main image */}
         <img
           src={img}
           className="w-full h-[420px] rounded-xl shadow-lg object-cover"
@@ -194,30 +170,25 @@ export default function PropertyDetail() {
           referrerPolicy="no-referrer"
         />
 
-        {/* Title + location */}
         <h2 className="text-3xl font-bold mt-4">{p.title}</h2>
         <p className="flex items-center gap-2 text-gray-600 dark:text-gray-300 text-lg">
           <FaMapMarkerAlt /> {p.city}, {p.state}
         </p>
 
-        {/* Price */}
         <p className="text-3xl font-extrabold text-indigo-600 mt-3">
           ₹ {Number(p.price).toLocaleString()}
         </p>
 
-        {/* Quick facts */}
         <div className="flex flex-wrap gap-6 mt-4 text-lg text-gray-700 dark:text-gray-200">
           <span className="flex gap-2 items-center"><FaBed /> {p.bedrooms} Beds</span>
           <span className="flex gap-2 items-center"><FaBath /> {p.bathrooms} Baths</span>
           <span className="flex gap-2 items-center"><FaRulerCombined /> {p.areaSqft} Sqft</span>
         </div>
 
-        {/* Description */}
         <p className="mt-6 text-gray-700 dark:text-gray-200 text-lg leading-relaxed">
           {p.description}
         </p>
 
-        {/* Extra images */}
         {p.images?.length > 1 && (
           <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mt-6">
             {p.images.slice(1).map((im, i) => (
@@ -232,11 +203,9 @@ export default function PropertyDetail() {
           </div>
         )}
 
-        {/* Location with Map Button */}
         <div className="mt-8">
           <h3 className="text-xl font-semibold mb-4">Location</h3>
-          
-          {/* Location Info Card */}
+
           <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-6 border">
             <div className="flex items-start justify-between">
               <div>
@@ -251,8 +220,7 @@ export default function PropertyDetail() {
                   {p.city}, {p.state}
                 </p>
               </div>
-              
-              {/* Map Actions */}
+
               <div className="flex flex-col gap-2">
                 <a
                   href={p.mapLink || `https://maps.google.com/?q=${encodeURIComponent(p.address || p.city + ', ' + p.state)}`}
@@ -276,7 +244,6 @@ export default function PropertyDetail() {
             </div>
           </div>
 
-          {/* Static Map Preview (Alternative) */}
           <div className="mt-4">
             <div className="bg-gradient-to-br from-blue-100 to-green-100 dark:from-blue-900 dark:to-green-900 rounded-xl h-48 flex items-center justify-center border">
               <div className="text-center">
@@ -293,7 +260,6 @@ export default function PropertyDetail() {
         </div>
       </div>
 
-      {/* Actions (not part of PDF to avoid duplicated buttons inside the PDF image) */}
       <div className="mt-6 flex flex-wrap gap-3">
         <button onClick={contact} className="btn btn-primary">
           <FaPhone /> Contact Broker
