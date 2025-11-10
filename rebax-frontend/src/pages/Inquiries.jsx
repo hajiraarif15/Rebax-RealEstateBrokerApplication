@@ -142,11 +142,10 @@ export default function Inquiries() {
           </div>
         </div>
 
-        {/* Chat Area */}
         <div className="lg:col-span-2 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 flex flex-col">
           {selectedInquiry ? (
             <>
-              {/* Chat Header */}
+
               <div className="p-4 border-b border-gray-200 dark:border-gray-700">
                 <div className="flex items-center justify-between">
                   <div>
@@ -163,7 +162,6 @@ export default function Inquiries() {
                 </div>
               </div>
 
-              {/* Chat Messages */}
               <div className="flex-1 overflow-y-auto p-4 space-y-4">
                 {chatLoading ? (
                   <div className="flex items-center justify-center h-32">
@@ -171,7 +169,7 @@ export default function Inquiries() {
                   </div>
                 ) : (
                   <>
-                    {/* Original inquiry message */}
+
                     <div className="flex">
                       <div className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
                         selectedInquiry.buyer?.id === auth?.userId
@@ -185,7 +183,6 @@ export default function Inquiries() {
                       </div>
                     </div>
 
-                    {/* Original reply if exists */}
                     {selectedInquiry.reply && (
                       <div className="flex">
                         <div className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
@@ -201,7 +198,6 @@ export default function Inquiries() {
                       </div>
                     )}
 
-                    {/* Chat Messages */}
                     {chatMessages.map((message) => (
                       <div key={message.id} className="flex">
                         <div className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
@@ -221,7 +217,6 @@ export default function Inquiries() {
                 )}
               </div>
 
-              {/* Message Input */}
               <div className="p-4 border-t border-gray-200 dark:border-gray-700">
                 <div className="flex gap-2">
                   <textarea
