@@ -25,15 +25,15 @@ public class PropertyController {
 
     @PostMapping
     public Property create(@AuthenticationPrincipal User u, @Valid @RequestBody PropertyDTO d) {
-        System.out.println("🏗️ Creating new property request");
+        System.out.println("Creating new property request");
         if (u == null) throw new RuntimeException("Unauthorized: Please log in.");
         if (u.getRole() != Role.BROKER) throw new RuntimeException("Only brokers can add properties.");
 
-        System.out.println("✅ Broker creating property: " + u.getEmail() + " (ID: " + u.getId() + ")");
-        System.out.println("📝 Property data: " + d.getTitle() + " in " + d.getCity() + ", " + d.getState());
+        System.out.println("Broker creating property: " + u.getEmail() + " (ID: " + u.getId() + ")");
+        System.out.println("Property data: " + d.getTitle() + " in " + d.getCity() + ", " + d.getState());
         
         Property created = svc.create(d, u);
-        System.out.println("🎉 Property created with ID: " + created.getId() + " for broker ID: " + created.getBroker().getId());
+        System.out.println("Property created with ID: " + created.getId() + " for broker ID: " + created.getBroker().getId());
         
         return created;
     }
@@ -68,11 +68,11 @@ public class PropertyController {
         if (!property.getBroker().getId().equals(u.getId()))
             return ResponseEntity.status(403).body("You can only update your own listings.");
 
-        System.out.println("✅ Broker updating property: " + u.getEmail() + " (ID: " + u.getId() + ")");
-        System.out.println("📝 Updated property data: " + d.getTitle() + " in " + d.getCity() + ", " + d.getState());
+        System.out.println("Broker updating property: " + u.getEmail() + " (ID: " + u.getId() + ")");
+        System.out.println("Updated property data: " + d.getTitle() + " in " + d.getCity() + ", " + d.getState());
         
         Property updated = svc.update(id, d, u);
-        System.out.println("🎉 Property updated with ID: " + updated.getId());
+        System.out.println("Property updated with ID: " + updated.getId());
         
         return ResponseEntity.ok(updated);
     }
@@ -95,19 +95,18 @@ public class PropertyController {
 
     @GetMapping("/my")
     public List<Property> myListings(@AuthenticationPrincipal User u) {
-        System.out.println("🔍 Incoming /api/properties/my request");
+        System.out.println("Incoming /api/properties/my request");
         if (u == null) {
-            System.out.println("❌ No authenticated user found");
+            System.out.println("No authenticated user found");
             throw new RuntimeException("Unauthorized");
         }
-        System.out.println("✅ Authenticated broker: " + u.getEmail() + " (ID: " + u.getId() + ", Role: " + u.getRole() + ")");
+        System.out.println("Authenticated broker: " + u.getEmail() + " (ID: " + u.getId() + ", Role: " + u.getRole() + ")");
         if (u.getRole() != Role.BROKER)
             throw new RuntimeException("Only brokers can access their listings");
 
         List<Property> props = svc.findByBroker(u);
-        System.out.println("🏠 Found " + props.size() + " properties for broker ID: " + u.getId());
+        System.out.println(" Found " + props.size() + " properties for broker ID: " + u.getId());
         
-        // Debug: print property details
         for (Property p : props) {
             System.out.println("  - Property: " + p.getTitle() + " (ID: " + p.getId() + ", Broker ID: " + (p.getBroker() != null ? p.getBroker().getId() : "null") + ")");
         }
